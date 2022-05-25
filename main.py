@@ -7,9 +7,10 @@ class SparseMatrix:
         self.inter_represent: str = 'CSR'
         self.array = array
         self.number_of_rows, self.number_of_columns = np.shape(self.array)
-        self.current_representation: dict
+        self.current_representation:dict
+        self.number_of_nonzero = None
         self.to_csr()
-        self.number_of_nonzero = len(self.current_representation)
+
 
     def to_csr(self):
         self.current_representation = dict()
@@ -18,6 +19,7 @@ class SparseMatrix:
                 if self.array[row][column] != 0:
                     self.current_representation[(row, column)] = self.array[row][column]
         self.inter_represent = "CSR"
+        self.number_of_nonzero = len(self.current_representation)
 
     def to_csc(self):
         self.current_representation = dict()
@@ -26,6 +28,18 @@ class SparseMatrix:
                 if self.array[row][column] != 0:
                     self.current_representation[(row, column)] = self.array[row][column]
         self.inter_represent = "CSC"
+        self.number_of_nonzero = len(self.current_representation)
+
+    def insert(self, i:int, j:int, a: float):
+        try:
+            self.array[i][j] = a
+        except IndexError as e:
+            print(e)
+
+        if self.inter_represent == "CSR":
+            self.to_csr()
+        else:
+            self.to_csc()
 
     def __str__(self) -> str:
         output = f"Representation: {self.inter_represent}\nNonzero = {self.number_of_nonzero}\n"
@@ -40,11 +54,11 @@ def main():
                   [5, 6, 0, 0, 3, 0, 0],
                   [0, 0, 0, 0, 1, 0, 0],
                   [1, 0, 0, 9, 0, 0, 0]])
-    print("Numpy array:")
-    print(x)
+
     sparse_matrix = SparseMatrix(x)
-    print(sparse_matrix)
     sparse_matrix.to_csc()
+    print(sparse_matrix)
+    sparse_matrix.insert(1, 1, 0)
     print(sparse_matrix)
 
 
